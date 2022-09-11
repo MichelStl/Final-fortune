@@ -44,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Entity npc[] = new Entity[10];
 
     //Game State
-    GameState gameState;
+    GameState gameState = GameState.PLAY_STATE;
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
