@@ -2,22 +2,21 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
+import main.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class Player extends Entity {
-    GamePanel gp;
+
     KeyHandler keyH;
+    public int hasKey = 0;
     public final int screenX;
     public final int screenY;
 
-    public int hasKey = 0;
-
     public Player(GamePanel gp, KeyHandler keyH){
-        this.gp = gp;
+        super(gp);
         this.keyH = keyH;
         screenX = gp.screenWidth /2 - (gp.tileSize / 2);
         screenY = gp.screenHeight/2 - (gp.tileSize / 2);
@@ -40,19 +39,17 @@ public class Player extends Entity {
         direction = "down";
     }
     public void getPlayerImage() {
-        try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_left_2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/player/blue_boy_right_2.png"));
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
+
+        up1 = setup("/player/blue_boy_up_1");
+        up2 = setup("/player/blue_boy_up_2");
+        down1 = setup("/player/blue_boy_down_1");
+        down2 = setup("/player/blue_boy_down_2");
+        left1 = setup("/player/blue_boy_left_1");
+        left2 = setup("/player/blue_boy_left_2");
+        right1 = setup("/player/blue_boy_right_1");
+        right2 = setup("/player/blue_boy_right_2");
     }
+
     public void update(){
         if(keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true){
             if(keyH.upPressed == true){
@@ -71,8 +68,14 @@ public class Player extends Entity {
             // Tile collision
             collisionOn = false;
             gp.collisionChecker.checkTile(this);
+            // Objects collision
             int objIndex = gp.collisionChecker.checkObject(this, true);
             pickObject(objIndex);
+
+            //NPC collision
+            int npcIndex = gp.collisionChecker.checkEntity(this, gp.npc);
+            interactNPC(npcIndex);
+
             if(collisionOn == false){
                 switch(direction) {
                     case "up":
@@ -139,7 +142,7 @@ public class Player extends Entity {
                 }
                 break;
         }
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize,null);
+        g2.drawImage(image, screenX, screenY,null);
     }
 
     /**
@@ -178,6 +181,15 @@ public class Player extends Entity {
                     gp.playSoundEffect(4);
                     break;
             }
+        }
+    }
+
+    /**
+     * Intéraction avec un NPC
+     */
+    public void interactNPC(int index){
+        if(index != 999){
+            System.out.println("Hit NPC");
         }
     }
 }

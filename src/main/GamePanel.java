@@ -1,12 +1,12 @@
 package main;
 
+import entity.Entity;
+import entity.NPCOldMan;
 import entity.Player;
 import object.SuperObject;
 import tile.TileManager;
-
 import javax.swing.JPanel;
 import java.awt.*;
-import java.security.PublicKey;
 
 public class GamePanel extends JPanel implements Runnable {
     // Screen settings
@@ -26,7 +26,7 @@ public class GamePanel extends JPanel implements Runnable {
 //    public  final int worldHeight = tileSize * maxWorldRow;
 
     TileManager tileManager = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
+    KeyHandler keyH = new KeyHandler(this);
 
     public Sound themeSound = new Sound();
     public Sound soundEffect = new Sound();
@@ -40,6 +40,12 @@ public class GamePanel extends JPanel implements Runnable {
     // Entity and Objects
     public Player player = new Player(this, keyH);
     public SuperObject gameObjects[] = new SuperObject[10];
+
+    public Entity npc[] = new Entity[10];
+
+    //Game State
+    GameState gameState;
+
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.gray);
@@ -80,28 +86,58 @@ public class GamePanel extends JPanel implements Runnable {
      * Update GamePanel data
      */
     public void update(){
-        player.update();
+        if(gameState == GameState.PLAY_STATE) {
+            player.update();
+            // NPC
+            for (int i = 0; i < npc.length; i++){
+                if(npc[i] != null) {
+                    npc[i].update();
+                }
+            }
+        }
+        if(gameState == GameState.PAUSE_STATE){
+            //--
+        }
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
+//DEBUG
+        long drawStart = 0;
+        if(keyH.checkDrawTime == true) {
+            drawStart = System.nanoTime();
+        }
+//
         tileManager.draw(g2);
         for (int i = 0; i < gameObjects.length; i++){
             if(gameObjects[i] != null){
                 gameObjects[i].draw(g2, this);
             }
         }
+        for (int i = 0; i < npc.length; i++){
+            if(npc[i] != null){
+                npc[i].draw(g2);
+            }
+        }
         player.draw(g2);
 
         //UI
         ui.draw(g2);
+//DEBUG
+        if(keyH.checkDrawTime == true) {
+            long drawEnd = System.nanoTime();
+            long passed = drawEnd - drawStart;
+            System.out.println("Time to draw: " + passed);
+        }
+        //
         g2.dispose();
     }
 
     public void setupGameObject(){
         assetSetter.setObject();
-        playThemeSound(0);
+        assetSetter.setNPC();
+        //TODO playThemeSound(0);
+        gameState = GameState.PLAY_STATE;
     }
     public void playThemeSound(int index){
         themeSound.setFile(index);

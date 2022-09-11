@@ -9,7 +9,13 @@ public class KeyHandler implements KeyListener {
     public boolean downPressed;
     public boolean rightPressed;
     public boolean leftPressed;
-
+    GamePanel gp;
+//DEBUG
+    boolean checkDrawTime = false;
+//
+    public KeyHandler(GamePanel gp){
+        this.gp = gp;
+    }
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -27,9 +33,29 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
             leftPressed = true;
         }
+
         if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
             rightPressed = true;
         }
+
+        if(code == KeyEvent.VK_P){
+            if(gp.gameState == GameState.PLAY_STATE){
+                gp.gameState = GameState.PAUSE_STATE;
+            } else if(gp.gameState == GameState.PAUSE_STATE){
+                gp.gameState = GameState.PLAY_STATE;
+            }
+        }
+//DEBUG
+        if(code == KeyEvent.VK_T){
+            if(checkDrawTime == false){
+                checkDrawTime = true;
+            }
+            else if(checkDrawTime == true){
+                checkDrawTime = false;
+
+            }
+        }
+//
     }
 
     @Override
