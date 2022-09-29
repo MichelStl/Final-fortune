@@ -1,10 +1,8 @@
 package entity;
 
 import main.GamePanel;
+import main.GameState;
 import main.KeyHandler;
-import main.UtilityTool;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -15,6 +13,7 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
 
+    public PlayerClass playerClass = PlayerClass.MINER;
     public Player(GamePanel gp, KeyHandler keyH){
         super(gp);
         this.keyH = keyH;
@@ -35,33 +34,57 @@ public class Player extends Entity {
         //Starting position
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
-        speed = 4;
+        speed = 3;
         direction = "down";
     }
     public void getPlayerImage() {
 
-        up1 = setup("/player/blue_boy_up_1");
-        up2 = setup("/player/blue_boy_up_2");
-        down1 = setup("/player/blue_boy_down_1");
-        down2 = setup("/player/blue_boy_down_2");
-        left1 = setup("/player/blue_boy_left_1");
-        left2 = setup("/player/blue_boy_left_2");
-        right1 = setup("/player/blue_boy_right_1");
-        right2 = setup("/player/blue_boy_right_2");
+        switch (playerClass) {
+            case MINER:
+                up1 = setup("/player/miner_up_1");
+                up2 = setup("/player/miner_up_2");
+                down1 = setup("/player/miner_down_1");
+                down2 = setup("/player/miner_down_2");
+                left1 = setup("/player/miner_left_1");
+                left2 = setup("/player/miner_left_2");
+                right1 = setup("/player/miner_right_1");
+                right2 = setup("/player/miner_right_2");
+                break;
+            case RED_HEAD_THEIF:
+                up1 = setup("/player/redhead_thief_up_1");
+                up2 = setup("/player/redhead_thief_up_2");
+                down1 = setup("/player/redhead_thief_down_1");
+                down2 = setup("/player/redhead_thief_down_2");
+                left1 = setup("/player/redhead_thief_left_1");
+                left2 = setup("/player/redhead_thief_left_2");
+                right1 = setup("/player/redhead_thief_right_1");
+                right2 = setup("/player/redhead_thief_right_2");
+                break;
+            case OLD_FARMER:
+                up1 = setup("/player/old_farmer_up_1");
+                up2 = setup("/player/old_farmer_up_2");
+                down1 = setup("/player/old_farmer_down_1");
+                down2 = setup("/player/old_farmer_down_2");
+                left1 = setup("/player/old_farmer_left_1");
+                left2 = setup("/player/old_farmer_left_2");
+                right1 = setup("/player/old_farmer_right_1");
+                right2 = setup("/player/old_farmer_right_2");
+                break;
+        }
     }
 
     public void update(){
-        if(keyH.upPressed == true || keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true){
+        if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed ){
             if(keyH.upPressed == true){
                 direction = "up";
             }
-            else if(keyH.downPressed == true){
+            else if(keyH.downPressed){
                 direction = "down";
             }
-            else if(keyH.leftPressed == true){
+            else if(keyH.leftPressed){
                 direction = "left";
             }
-            else if(keyH.rightPressed == true){
+            else if(keyH.rightPressed){
                 direction = "right";
             }
 
@@ -107,6 +130,7 @@ public class Player extends Entity {
     public void draw(Graphics2D g2){
 /*        g2.setColor(Color.white);
         g2.fillRect(x, y, gp.tileSize, gp.tileSize);*/
+
         BufferedImage image = null;
         switch (direction){
             case "up":
@@ -189,7 +213,11 @@ public class Player extends Entity {
      */
     public void interactNPC(int index){
         if(index != 999){
-            System.out.println("Hit NPC");
+            //if(gp.keyH.enterPressed) {
+                gp.gameState = GameState.DIALOGUE;
+                gp.npc[index].speak();
+            //}
+            gp.keyH.enterPressed = false;
         }
     }
 }

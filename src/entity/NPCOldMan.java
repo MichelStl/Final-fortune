@@ -9,6 +9,7 @@ public class NPCOldMan extends Entity {
     public NPCOldMan(GamePanel gp){
         super(gp);
         setDefaultValues();
+        setDialogue();
     }
 
     public void setDefaultValues(){
@@ -49,5 +50,14 @@ public class NPCOldMan extends Entity {
         left2 = setup("/npc/old-man-left2");
         right1 = setup("/npc/old-man-right1");
         right2 = setup("/npc/old-man-right2");
+    }
+    public void setDialogue(){
+        dialogues[0] = "Hello man!";
+        dialogues[1] = "You looks strong, but you go the wrong way \nto help an old wizard like me.";
+        dialogues[2] = "Have you found the treasure?";
+        dialogues[3] = "Well, good luck!";
+    }
+    public void speak(){
+        super.speak();
     }
 }
