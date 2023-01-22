@@ -16,6 +16,7 @@ public class Player extends Entity {
     public PlayerClass playerClass = PlayerClass.MINER;
     public Player(GamePanel gp, KeyHandler keyH){
         super(gp);
+        type = EntityType.PLAYER;
         this.keyH = keyH;
         screenX = gp.screenWidth /2 - (gp.tileSize / 2);
         screenY = gp.screenHeight/2 - (gp.tileSize / 2);
@@ -28,6 +29,7 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
+        getPlayerAttackImage();
     }
 
     public void setDefaultValues(){
@@ -36,45 +38,69 @@ public class Player extends Entity {
         worldY = gp.tileSize * 21;
         speed = 3;
         direction = "down";
+
+        //PLAYER LIFE STATUS
+        maxLife = 8;
+        life = maxLife;
     }
     public void getPlayerImage() {
 
         switch (playerClass) {
             case MINER:
-                up1 = setup("/player/miner_up_1");
-                up2 = setup("/player/miner_up_2");
-                down1 = setup("/player/miner_down_1");
-                down2 = setup("/player/miner_down_2");
-                left1 = setup("/player/miner_left_1");
-                left2 = setup("/player/miner_left_2");
-                right1 = setup("/player/miner_right_1");
-                right2 = setup("/player/miner_right_2");
+                up1 = setup("/player/miner_up_1", gp.tileSize, gp.tileSize);
+                up2 = setup("/player/miner_up_2", gp.tileSize, gp.tileSize);
+                down1 = setup("/player/miner_down_1", gp.tileSize, gp.tileSize);
+                down2 = setup("/player/miner_down_2", gp.tileSize, gp.tileSize);
+                left1 = setup("/player/miner_left_1", gp.tileSize, gp.tileSize);
+                left2 = setup("/player/miner_left_2", gp.tileSize, gp.tileSize);
+                right1 = setup("/player/miner_right_1", gp.tileSize, gp.tileSize);
+                right2 = setup("/player/miner_right_2", gp.tileSize, gp.tileSize);
                 break;
             case RED_HEAD_THEIF:
-                up1 = setup("/player/redhead_thief_up_1");
-                up2 = setup("/player/redhead_thief_up_2");
-                down1 = setup("/player/redhead_thief_down_1");
-                down2 = setup("/player/redhead_thief_down_2");
-                left1 = setup("/player/redhead_thief_left_1");
-                left2 = setup("/player/redhead_thief_left_2");
-                right1 = setup("/player/redhead_thief_right_1");
-                right2 = setup("/player/redhead_thief_right_2");
+                up1 = setup("/player/redhead_thief_up_1", gp.tileSize, gp.tileSize);
+                up2 = setup("/player/redhead_thief_up_2", gp.tileSize, gp.tileSize);
+                down1 = setup("/player/redhead_thief_down_1", gp.tileSize, gp.tileSize);
+                down2 = setup("/player/redhead_thief_down_2", gp.tileSize, gp.tileSize);
+                left1 = setup("/player/redhead_thief_left_1", gp.tileSize, gp.tileSize);
+                left2 = setup("/player/redhead_thief_left_2", gp.tileSize, gp.tileSize);
+                right1 = setup("/player/redhead_thief_right_1", gp.tileSize, gp.tileSize);
+                right2 = setup("/player/redhead_thief_right_2", gp.tileSize, gp.tileSize);
                 break;
             case OLD_FARMER:
-                up1 = setup("/player/old_farmer_up_1");
-                up2 = setup("/player/old_farmer_up_2");
-                down1 = setup("/player/old_farmer_down_1");
-                down2 = setup("/player/old_farmer_down_2");
-                left1 = setup("/player/old_farmer_left_1");
-                left2 = setup("/player/old_farmer_left_2");
-                right1 = setup("/player/old_farmer_right_1");
-                right2 = setup("/player/old_farmer_right_2");
+                up1 = setup("/player/old_farmer_up_1", gp.tileSize, gp.tileSize);
+                up2 = setup("/player/old_farmer_up_2", gp.tileSize, gp.tileSize);
+                down1 = setup("/player/old_farmer_down_1", gp.tileSize, gp.tileSize);
+                down2 = setup("/player/old_farmer_down_2", gp.tileSize, gp.tileSize);
+                left1 = setup("/player/old_farmer_left_1", gp.tileSize, gp.tileSize);
+                left2 = setup("/player/old_farmer_left_2", gp.tileSize, gp.tileSize);
+                right1 = setup("/player/old_farmer_right_1", gp.tileSize, gp.tileSize);
+                right2 = setup("/player/old_farmer_right_2", gp.tileSize, gp.tileSize);
+                break;
+            default:
                 break;
         }
     }
 
+    public void getPlayerAttackImage(){
+        switch (playerClass){
+            case MINER:
+                attackUp1 = setup("/player/attack/miner_mining_up_1", gp.tileSize, gp.tileSize * 2);
+                attackUp2 = setup("/player/attack/miner_mining_up_2", gp.tileSize, gp.tileSize * 2);
+                attackDown1 = setup("/player/attack/miner_mining_down_1", gp.tileSize, gp.tileSize * 2);
+                attackDown2 = setup("/player/attack/miner_mining_down_2", gp.tileSize, gp.tileSize * 2);
+                attackLeft1 = setup("/player/attack/miner_mining_left_1", gp.tileSize *2, gp.tileSize);
+                attackLeft2 = setup("/player/attack/miner_mining_left_2", gp.tileSize *2, gp.tileSize);
+                attackRight1 = setup("/player/attack/miner_mining_right_1", gp.tileSize *2, gp.tileSize);
+                attackRight2 = setup("/player/attack/miner_mining_right_2", gp.tileSize *2, gp.tileSize);
+                break;
+            default:
+                break;
+        }
+    }
     public void update(){
-        if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed ){
+        if(attacking){
+            attacking();
+        } else if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed || keyH.enterPressed == true){
             if(keyH.upPressed == true){
                 direction = "up";
             }
@@ -99,7 +125,13 @@ public class Player extends Entity {
             int npcIndex = gp.collisionChecker.checkEntity(this, gp.npc);
             interactNPC(npcIndex);
 
-            if(collisionOn == false){
+            int monsterIndex = gp.collisionChecker.checkEntity(this, gp.monster);
+            monsterContact(monsterIndex);
+            //Check event
+            gp.eventHandler.checkEvent();
+
+
+            if(collisionOn == false && keyH.enterPressed == false){
                 switch(direction) {
                     case "up":
                         worldY -= speed;
@@ -115,6 +147,7 @@ public class Player extends Entity {
                         break;
                 }
             }
+            gp.keyH.enterPressed = false;
             spriteCounter++;
             if(spriteCounter > 10){
                 if(spriteNum == 1){
@@ -125,48 +158,106 @@ public class Player extends Entity {
                 spriteCounter = 0;
             }
         }
-
+        if(invincible){
+            invincibleCounter++;
+            if(invincibleCounter > 60){
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
     }
     public void draw(Graphics2D g2){
 /*        g2.setColor(Color.white);
         g2.fillRect(x, y, gp.tileSize, gp.tileSize);*/
 
         BufferedImage image = null;
+        int tempScreenX = screenX;
+        int tempScreenY = screenY;
         switch (direction){
             case "up":
-                if(spriteNum == 1){
-                    image = up1;
-                }
-                if(spriteNum == 2){
-                    image = up2;
+                if(!attacking) {
+                    if (spriteNum == 1) {
+                        image = up1;
+                    }
+                    if (spriteNum == 2) {
+                        image = up2;
+                    }
+                } else {
+                    tempScreenY -= gp.tileSize;
+                    if (spriteNum == 1) {
+                        image = attackUp1;
+                    }
+                    if (spriteNum == 2) {
+                        image = attackUp2;
+                    }
                 }
                 break;
             case "down":
-                if(spriteNum == 1){
-                    image = down1;
-                }
-                if(spriteNum == 2){
-                    image = down2;
+                if(!attacking) {
+                    if (spriteNum == 1) {
+                        image = down1;
+                    }
+                    if (spriteNum == 2) {
+                        image = down2;
+                    }
+                } else {
+                    if (spriteNum == 1) {
+                        image = attackDown1;
+                    }
+                    if (spriteNum == 2) {
+                        image = attackDown2;
+                    }
                 }
                 break;
             case "left":
-                if(spriteNum == 1){
-                    image = left1;
-                }
-                if(spriteNum == 2){
-                    image = left2;
+                if(!attacking) {
+                    if (spriteNum == 1) {
+                        image = left1;
+                    }
+                    if (spriteNum == 2) {
+                        image = left2;
+                    }
+                } else {
+                    tempScreenX -= gp.tileSize;
+                    if (spriteNum == 1) {
+                        image = attackLeft1;
+                    }
+                    if (spriteNum == 2) {
+                        image = attackLeft2;
+                    }
                 }
                 break;
             case "right":
-                if(spriteNum == 1){
-                    image = right1;
-                }
-                if(spriteNum == 2){
-                    image = right2;
+                if(!attacking) {
+                    if (spriteNum == 1) {
+                        image = right1;
+                    }
+                    if (spriteNum == 2) {
+                        image = right2;
+                    }
+                } else {
+                    if (spriteNum == 1) {
+                        image = attackRight1;
+                    }
+                    if (spriteNum == 2) {
+                        image = attackRight2;
+                    }
                 }
                 break;
         }
-        g2.drawImage(image, screenX, screenY,null);
+
+
+        if(invincible) {
+            //Effet d'invincibilité par l'opacité
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+            // Debug invincibilité
+/*            g2.setFont(new Font("Arial", Font.PLAIN, 18));
+            g2.drawString("Invincible", 10, 20);*/
+        }
+        g2.drawImage(image, tempScreenX, tempScreenY,null);
+        //Reset opacity
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
     }
 
     /**
@@ -207,6 +298,18 @@ public class Player extends Entity {
             }
         }
     }
+    public void attacking(){
+        spriteCounter++;
+        if(spriteCounter <= 5){
+            spriteNum = 1;
+        } else if(spriteCounter > 5 && spriteCounter <= 25){
+            spriteNum = 2;
+        } else if (spriteCounter > 25) {
+            spriteNum = 1;
+            spriteCounter = 0;
+            attacking = false;
+        }
+    }
 
     /**
      * Intéraction avec un NPC
@@ -218,6 +321,18 @@ public class Player extends Entity {
                 gp.npc[index].speak();
             //}
             gp.keyH.enterPressed = false;
+        } else {
+            if(keyH.enterPressed){
+                attacking = true;
+            }
+        }
+    }
+    public void monsterContact(int monsterIndex){
+        if(monsterIndex != 999){
+            if(!invincible){
+                life -= 1;
+                invincible = true;
+            }
         }
     }
 }

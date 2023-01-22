@@ -1,6 +1,7 @@
 package main;
 
 import entity.NPCOldMan;
+import monster.MonsterYeti;
 import object.BootsObject;
 import object.ChestObject;
 import object.DoorObject;
@@ -52,5 +53,18 @@ public class AssetSetter {
         gp.npc[0].worldX = 26 * gp.tileSize;
         gp.npc[0].worldY = 18 * gp.tileSize;
 
+        gp.npc[1] = new NPCOldMan(gp);
+        gp.npc[1].worldX = 28 * gp.tileSize;
+        gp.npc[1].worldY = 16 * gp.tileSize;
+
+    }
+    public void setMonster(){
+        gp.monster[0] = new MonsterYeti(gp);
+        gp.monster[0].worldX = 38 * gp.tileSize;
+        gp.monster[0].worldY  = 7 * gp.tileSize;
+
+        gp.monster[1] = new MonsterYeti(gp);
+        gp.monster[1].worldX = 39 * gp.tileSize;
+        gp.monster[1].worldY  = 7 * gp.tileSize;
     }
 }

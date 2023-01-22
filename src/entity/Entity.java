@@ -9,12 +9,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Entity {
-    GamePanel gp;
-    private UtilityTool util = new UtilityTool();
-    public int worldX;
-    public int worldY;
-    public int speed;
+    public GamePanel gp;
+    public UtilityTool util = new UtilityTool();
+    public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
+    public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
+    public BufferedImage image, image1, image2, image3, image4, image5, image6, image7, image8;
+    public int solidAreaDefaultX;
+    public int solidAreaDefaultY;
+    public String dialogues[] = new String[20];
 
+    //region Movement BufferedImages
     public BufferedImage up1;
     public BufferedImage up2;
     public BufferedImage down1;
@@ -23,28 +27,52 @@ public class Entity {
     public BufferedImage right2;
     public BufferedImage left1;
     public BufferedImage left2;
-    public String direction;
+    //endregion
 
-    public int spriteCounter = 0;
-    public int spriteNum = 1;
+    //region Attack BufferedImages
+    public BufferedImage attackUp1;
+    public BufferedImage attackUp2;
+    public BufferedImage attackDown1;
+    public BufferedImage attackDown2;
+    public BufferedImage attackLeft1;
+    public BufferedImage attackLeft2;
+    public BufferedImage attackRight1;
+    public BufferedImage attackRight2;
+    //endregion
+    public boolean collision = false;
 
-    public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
-    public boolean collisionOn = false;
 
-    public int actionLockCounter = 0;
-    public int solidAreaDefaultX;
-    public int solidAreaDefaultY;
-
-    public String dialogues[] = new String[20];
+    // STATE
+    public int worldX;
+    public int worldY;
+    public String direction = "down";
     public int dialogueIndex = 0;
+    public int spriteNum = 1;
+    public boolean invincible = false;
+    public boolean collisionOn = false;
+    public boolean attacking = false;
+
+    //COUNTER
+    public int spriteCounter = 0;
+    public int invincibleCounter = 0;
+    public int actionLockCounter = 0;
+
+
+    //CHARACTER Attribute
+    public int maxLife;
+    public int life;
+    public int speed;
+    public EntityType type;
+    public String name;
+
     public Entity(GamePanel gp){
         this.gp = gp;
     }
-    public BufferedImage setup(String imagePath){
+    public BufferedImage setup(String imagePath, int width, int height){
         BufferedImage image = null;
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-            image = util.scaleImage(image, gp.tileSize, gp.tileSize);
+            image = util.scaleImage(image, width, height);
 
         } catch (Exception ex){
             ex.printStackTrace();
@@ -131,7 +159,15 @@ public class Entity {
         collisionOn = false;
         gp.collisionChecker.checkTile(this);
         gp.collisionChecker.checkObject(this, false);
-        gp.collisionChecker.checkPlayer(this);
+        gp.collisionChecker.checkEntity(this, gp.npc);
+        gp.collisionChecker.checkEntity(this, gp.monster);
+        boolean contactPlayer = gp.collisionChecker.checkPlayer(this);
+        if(this.type == EntityType.MONSTER && contactPlayer){
+            if(!gp.player.invincible){
+                gp.player.life -= 1;
+                gp.player.invincible = true;
+            }
+        }
 
         if(collisionOn == false){
             switch(direction) {

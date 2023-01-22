@@ -1,7 +1,8 @@
 package main;
 
+import entity.Entity;
+import object.HealthIndicatorObject;
 import object.KeyObject;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,7 +12,7 @@ import java.io.InputStream;
 public class UI {
     GamePanel gp;
     BufferedImage keyImage;
-
+    BufferedImage health0, health1, health2, health3, health4, health5, health6, health7, health8;
     //BufferedImage keyImage;
     private Font zyphyte;
     //Font excludedItalic;
@@ -42,9 +43,18 @@ public class UI {
             e.printStackTrace();
         }
         // Déclaration des éléments fixe de l'écran---------------- A voir
-            KeyObject key = new KeyObject(gp);
-            keyImage = key.image;
-
+        KeyObject key = new KeyObject(gp);
+        keyImage = key.image;
+        Entity health = new HealthIndicatorObject(gp);
+        health0 = health.image;
+        health1 = health.image1;
+        health2 = health.image2;
+        health3 = health.image3;
+        health4 = health.image4;
+        health5 = health.image5;
+        health6 = health.image6;
+        health7 = health.image7;
+        health8 = health.image8;
     }
     public void showMessage(String text){
         message = text;
@@ -62,14 +72,16 @@ public class UI {
                 drawTitleScreen();
                 break;
             case PLAY_STATE:
-                drawPlayScreen();
+                drawPlayerHealth();
                 break;
             case PAUSE_STATE:
+                drawPlayerHealth();
                 drawPauseScreen();
                 break;
             case STOP_STATE:
                 break;
             case DIALOGUE:
+                drawPlayerHealth();
                 drawDialogueScreen();
                 break;
             default:
@@ -123,8 +135,41 @@ public class UI {
         }
     }
 
-    public void drawPlayScreen(){
+    public void drawPlayerHealth(){
+        int x = gp.tileSize/2;
+        int y = gp.tileSize/2;
 
+        switch (gp.player.life){
+            case 0:
+                g2.drawImage(health0, x, y, null);
+                break;
+            case 1:
+                g2.drawImage(health1, x, y, null);
+                break;
+            case 2:
+                g2.drawImage(health2, x, y, null);
+                break;
+            case 3:
+                g2.drawImage(health3, x, y, null);
+                break;
+            case 4:
+                g2.drawImage(health4, x, y, null);
+                break;
+            case 5:
+                g2.drawImage(health5, x, y, null);
+                break;
+            case 6:
+                g2.drawImage(health6, x, y, null);
+                break;
+            case 7:
+                g2.drawImage(health7, x, y, null);
+                break;
+            case 8:
+                g2.drawImage(health8, x, y, null);
+                break;
+            default:
+                break;
+        }
     }
     public void drawPauseScreen(){
         String text = "PAUSED";
